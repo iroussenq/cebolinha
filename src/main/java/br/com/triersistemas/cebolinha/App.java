@@ -5,8 +5,13 @@ public class App {
 		Fornecedor fornecedor1 = new Fornecedor();
 		Farmaceutico farmaceutico1 = new Farmaceutico();
 		fornecedor1.fazProdutos();
-
-		System.out.println("\nFARMACIA CEBOLINHA: \nLista de produtos disponiveis: \n" + fornecedor1.getProduto() + "\nDesconto do dia: " + farmaceutico1.getDesconto(fornecedor1) + "\nFARMACEUTICO:\nNome: " + 
-		farmaceutico1.getNome() + "\nCpf: " + farmaceutico1.getDocumento());
+		String cpf = farmaceutico1.getDocumento();
+		Integer idade = farmaceutico1.getIdade();
+		System.out.println("\nFARMACIA CEBOLINHA:\n \nLista de produtos disponiveis: \n" + fornecedor1.getProduto() + "\nDesconto do dia: " + farmaceutico1.getDesconto(fornecedor1) + "\n\nFARMACEUTICO:\n\nNome: " + 
+		farmaceutico1.getNome() + "\nIdade: " + idade + "\n");
+		System.out.println("+----------------------+"+
+						 "\n|Valido: Sim           |" +
+				         "\n|CPF....:" + cpf + "|" +
+						 "\n+----------------------+");
 	}
 }

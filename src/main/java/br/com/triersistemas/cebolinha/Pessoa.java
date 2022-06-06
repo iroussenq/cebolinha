@@ -28,5 +28,5 @@ public abstract class Pessoa {
 	}
 	
 	public abstract String getDocumento();
-
+	public abstract Integer getIdade();
 }

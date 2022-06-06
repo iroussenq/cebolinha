@@ -50,4 +50,10 @@ public class Fornecedor extends PessoaJuridica {
 		}
 		this.produtos = itensDoDia;
 	}
+
+	@Override
+	public Integer getIdade() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
