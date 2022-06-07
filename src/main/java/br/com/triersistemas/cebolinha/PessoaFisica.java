@@ -2,62 +2,49 @@ package br.com.triersistemas.cebolinha;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.SplittableRandom;
 
-import javax.swing.JOptionPane;
+public abstract class PessoaFisica extends Pessoa {
 
-public abstract class PessoaFisica extends Pessoa{
-	private static final ArrayList<Integer> cpf = new ArrayList<>();
-	private String cpfValidado = "";
-	private Integer soma = 0;
-	
-	@Override
-	public String getDocumento(){
-		for (int i = 0; i < 11; i++) {
-			SplittableRandom r = new SplittableRandom();
-			Integer numeroCPF = r.nextInt(0,9);
-			cpf.add(numeroCPF);
-		}
-		
-		for (int i = 0; i < 11; i++) {
-			if(i == 10) {
-			if (soma % 11 < 3 || soma % 11 > 9) {
-				cpf.remove(10);
-				cpf.add(0);
-			} else {
-				cpf.remove(10);
-				cpf.add(soma % 11);
-			}
-			} else {
-				soma = soma + cpf.get(i) * i;
-			}
-		}
-		soma = 0;
-		cpf.forEach((Integer digitoCpf) -> {
-			
-			if (soma == 3 || soma == 6) {
-				cpfValidado = cpfValidado + "-";
-			} else if (soma == 9){
-				cpfValidado = cpfValidado + ".";
-			}
-			cpfValidado = cpfValidado + cpf.get(soma).toString();
-			soma ++;
-				});	
-		return cpfValidado;
-	}
-	@Override
-	public Integer getIdade() {
-		Integer ano = Integer.valueOf( JOptionPane.showInputDialog(null,"Digite o ano que voce nasceu"));
-		Integer mes = Integer.valueOf( JOptionPane.showInputDialog(null, "Digite o mes que voce nasceu"));
-		Integer dia = Integer.valueOf( JOptionPane.showInputDialog(null, "Digite o dia que voce nasceu"));
-		LocalDate dataNascimento = LocalDate.of(ano, mes, dia);
-		Integer idade = 0;
-		if (LocalDate.now().getDayOfYear() < dataNascimento.getDayOfYear()) {
-			idade = LocalDate.now().getYear() - dataNascimento.getYear() - 1;
-		} else {
-			idade = LocalDate.now().getYear() - dataNascimento.getYear();		
-			}
-		return idade;
-			
-	}
+    private String cpf;
+
+    protected PessoaFisica() {
+        SplittableRandom r = new SplittableRandom();
+        List<Integer> digitos = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            digitos.add(r.nextInt(0, 10));
+        }
+        this.cpf = this.geraCpf(digitos);
+    }
+
+    protected PessoaFisica(final String nome, final LocalDate niver, final String cpf) {
+        super(nome, niver);
+        this.cpf = extractNumbers(cpf);
+    }
+
+    private String geraCpf(final List<Integer> digitos) {
+        digitos.add(super.mod11(digitos, 1, 2, 3, 4, 5, 6, 7, 8, 9));
+        digitos.add(super.mod11(digitos, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
+        return digitos.stream()
+                .map(Object::toString)
+                .reduce("", (p, e) -> p + e);
+    }
+
+    @Override
+    public boolean documentoValido() {
+        final List<Integer> digitos = extractNumbersToList(this.cpf);
+        if (digitos.size() == 11 && digitos.stream().distinct().count() > 1) {
+            return geraCpf(digitos.subList(0, 9)).equals(this.cpf);
+        }
+        return false;
+    }
+
+    @Override
+    public String getDocumento() {
+        if (this.cpf.length() == 11) {
+            return cpf.replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
+        }
+        return cpf;
+    }
 }
